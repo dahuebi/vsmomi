@@ -7,5 +7,5 @@ install:
 script:
   - vs --help
   - find vsmomi -iname '*.py' | xargs python -m py_compile
-  - python setup build
-  - python setup bdist
+  - python setup.py build
+  - python setup.py bdist
