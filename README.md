@@ -1,0 +1,2 @@
+# vsmomi
+VMWare vSphere CLI
