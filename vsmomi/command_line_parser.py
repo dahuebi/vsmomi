@@ -113,6 +113,16 @@ class CommandLineParser(object):
         n, m = (self.toNumber(x) for x in match.groups())
         return (n, m)
 
+    def nicAddType(self, s):
+        fmt = "[mac=xx:xx:xx:xx:xx:xx,ip=a.b.c.d/8,gw=u,v,w,x]"
+        macPattern = "[.:]".join(["[0-9A-F]{2}"] * 6)
+        ipPattern = "\.".join(["\d+"] * 4)
+        pattern = "^(?:mac=({0}),?)?(?:ip=({1})(?:/(\d+))?,?)?(?:gw=({1}),?)?$".format(
+                macPattern, ipPattern)
+        match = self.matchPattern(pattern, fmt, s)
+        mac, ip, mask, gw = match.groups()
+        return {"mac": mac, "ip": ip, "mask": mask, "gw": gw}
+
     def matchPattern(self, pattern, fmt, s):
         reg = re.compile(pattern, re.I)
         match = reg.search(s)
