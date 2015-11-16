@@ -22,6 +22,8 @@ class CommandLineParser(object):
         number = value
         try:
             number = int(value)
+            # need native int not newint
+            number = eval("{}".format(number))
         except (TypeError, ValueError):
             pass
         return number

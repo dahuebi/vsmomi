@@ -132,34 +132,24 @@ class Edit(SubCommand):
             )
             devices.append(change)
 
-        # TODO: disk_add
-        # disk-new: {"slot": (n, m)?, "capacity":size}
-        # disk-linked: {"slot": (n, m)?, "vm": (vm, snashot?), "vmSlot": (x, y)}
-        for diskNew in disk_add_new:
-            m = re.search("size=([\d]+)(GB|MG|TG|KB)?", diskNew, re.I)
-            if not m:
-                raise RuntimeError("Invalid format '{}'".format(diskNew))
-            size, unit = m.groups()
-            slotId = re.sub(",?size=.*", "", diskNew)
-            (ctrlNr, slotNr) = (None, None)
-            if slotId:
-                m = re.search("^([\d]+)-([\d]+)", slotId)
-                if not m:
-                    raise RuntimeError("Wrong fromat in slotId '{}'".format(slotId))
-                (ctrlNr, slotNr) = m.groups()
-            else:
+        # disk-new: {"slot": (m, n), "capacity":size}
+        #           m, n may be None
+        for entry in diskNew:
+            (ctrlNr, slotNr) = entry["slot"]
+            capacity = entry["capacity"]
+            if ctrlNr is None:
                 # get free slot
                 ctrlNr, slotNr = layout.getFreeSlot()
-            print (size, unit, ctrlNr, slotNr)
-            capacityInKB = size
+            capacityInKB = capacity // 1024
+
+            ctrl = layout.getController(ctrlNr)
+            ctrlKey = ctrl.key
 
             backing = vim.vm.device.VirtualDisk.FlatVer2BackingInfo(
                 diskMode="persistent", # persistent: dependent
                 thinProvisioned=True,
                 parent = None
                 )
-            ctrl = layout.getController(ctrlNr)
-            ctrlKey = ctrl.key
             disk = vim.vm.device.VirtualDisk(
                 key=-1,
                 backing=backing,
@@ -167,8 +157,64 @@ class Edit(SubCommand):
                 controllerKey=ctrlKey,
                 unitNumber=slotNr
                 )
-
             layout.addDisk(ctrlNr, slotNr, disk)
+
+            change = VDS(
+                operation=VDS.Operation.add,
+                fileOperation=VDS.FileOperation.create,
+                device=disk
+                )
+
+            devices.append(change)
+
+        # disk-linked: {"slot": (n, m)?, "vm": (vm, snashot?), "vmSlot": (x, y)}
+        #              m, n may be None
+        for entry in diskLinked:
+            (ctrlNr, slotNr) = entry["slot"]
+            if ctrlNr is None:
+                # get free slot
+                ctrlNr, slotNr = layout.getFreeSlot()
+            (fromVmName, fromSnapshotName) = entry["vm"]
+            fromVm = self.getVmByName(fromVmName)
+            if not fromVm:
+                raise LookupError("From VM '{}' not found".format(fromVmName))
+            fromSnapshot = None
+            for root, tree in self._walkVmSnapshots(fromVm):
+                if not fromSnapshotName:
+                    # find latest snapshot
+                    fromSnapshot = tree.snapshot
+                elif fromSnapshot == tree.name:
+                    fromSnapshot = tree.snapshot
+                    break
+
+            if not fromSnapshot:
+                raise LookupError("No snapshot or snapshot '{}' not found in VM '{}'".format(
+                    fromSnapshotName, fromVmName))
+            fromLayout = VirtualMachineDiskLayout(fromSnapshot)
+            (fromCtrlNr, fromSlotNr) = entry["vmSlot"]
+            fromDisk = fromLayout.getDisk(fromCtrlNr, fromSlotNr)
+            if not fromDisk:
+                raise LookupError("From Disk '{}' not found in snapshot '{}'".format(
+                    (fromCtrlNr, fromSlotNr), fromSnapshotName))
+            deltaBacking= fromDisk.backing.parent
+
+            ctrl = layout.getController(ctrlNr)
+            ctrlKey = ctrl.key
+
+            backing = vim.vm.device.VirtualDisk.FlatVer2BackingInfo(
+                diskMode="persistent", # persistent: dependent
+                thinProvisioned=True,
+                parent = deltaBacking
+                )
+            disk = vim.vm.device.VirtualDisk(
+                key=-1,
+                backing=backing,
+                capacityInKB=0,
+                controllerKey=ctrlKey,
+                unitNumber=slotNr
+                )
+            layout.addDisk(ctrlNr, slotNr, disk)
+
             change = VDS(
                 operation=VDS.Operation.add,
                 fileOperation=VDS.FileOperation.create,

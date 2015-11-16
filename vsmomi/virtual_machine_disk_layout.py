@@ -35,8 +35,10 @@ class VirtualMachineDiskLayout(object):
 
     def addDisk(self, ctrlNr, slotNr, disk):
         layout = self.layout
-        assert ctrlNr in layout and slotNr not in layout[ctrlNr]["slots"], \
-                "%d-%d" % (ctrlNr, slotNr)
+        assert ctrlNr in layout, \
+                "controller '{}' must exist".format(ctrlNr)
+        assert slotNr not in layout[ctrlNr]["slots"], \
+                "slot '{}' must not exist".format((ctrlNr, slotNr))
         layout[ctrlNr]["slots"][slotNr] = disk
 
     def getDisk(self, ctrlNr, slotNr):
