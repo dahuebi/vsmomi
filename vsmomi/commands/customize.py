@@ -14,15 +14,64 @@ class Customize(SubCommand):
         super(Customize, self).__init__(*args, **kwargs)
 
     @classmethod
-    def addParser(self, cmdLineParser, subParsers):
-        # TODO: implement
-        pass
+    def addParser(self, cmdLineParser, subparsers):
+        parser = cmdLineParser.getSubParser(
+                "customize", subparsers,
+                help="Customize VMs")
+        parser.add_argument(
+                "name",
+                metavar="name",
+                help="VM to clone from")
+        parser.add_argument(
+                "--cms", type=str,
+                metavar="customization",
+                help="Path to customication file")
+        parser.add_argument(
+                "--nic-add", nargs="+",
+                default=[], type=cmdLineParser.nicAddType,
+                metavar="<nic-add>",
+                dest="nicAdd",
+                help="Customize network interfaces.\n" \
+                "[mac=,ip=x.x.x.x/mask,gw=]")
 
-    def customize(self, name=None, cms=None):
+        parser.set_defaults(cloneArgs=["name", "csm", "nicAdd"])
+
+    def customize(self, name=None, cms=None, nicAdd=[]):
         regexps = [re.compile("^{}$".format(re.escape(name)))]
         vm = self.getRegisteredVms(regexps=regexps)[0]
-        csm = self.getCSMByName(csm)
-        task = vm.CustomizeVM(csm)
+        customSpec = vim.vm.customization.Specification()
+        if cms:
+            customSpec = self.getCSMByName(csm)
+
+        for nicDesc in nicAdd:
+            mac = nicDesc["map"]
+            ip = nicDesc["ip"]
+            mask = nicDesc["mask"]
+            gw = nicDesc["gw"]
+            adapterMap = vim.vm.customization.AdapterMapping()
+            if mac:
+                adapterMap.macAddress = mac
+            if not ip:
+                adapterMap.ip = vim.vm.customization.DhcpIpGenerator()
+            else:
+                adapterMap.ip = vim.vm.customization.FixedIp(ipAddress=ip)
+                if mask:
+                    adapterMap.subnetMask = mask
+                if gw:
+                    adapterMap.gateway = gw
+                # adapterMap.dnsDomain
+            csm.nicSettingsMap.append(adapterMap)
+        # hostname/domain
+        # ident = vim.vm.customization.LinuxPrep(hostName=hostname, domain=domain)
+        # customSpec.identity = ident
+        # windows ???
+
+        # dnsServerList, dnsSuffixList
+        # globalIPSettings = vim.vm.customization.GlobalIPSettings(dnsServerList=dnsServerList,
+        #           dnsSuffixList=dnsSuffixList)
+        # customSpec.globalIPSettings = globalIPSettings
+
+        task = vm.CustomizeVM(customSpec)
         vcTask = VcTask(task)
         vcTask.waitTaskDone()
         if vcTask.isSuccess():
