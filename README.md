@@ -29,4 +29,5 @@ call rc.cmd
 
 ### TODO
 * Add Commands: snapshot, customize
+* Add Network interfaces to clone/edit
 * Add Doc
