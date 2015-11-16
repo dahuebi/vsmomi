@@ -1,3 +1,5 @@
+![alt text](https://travis-ci.org/dahuebi/vsmomi.svg?branch=master "travis build status")
+
 vsmomi
 ======
 
