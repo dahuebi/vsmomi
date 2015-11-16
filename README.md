@@ -21,10 +21,10 @@ vs ls -s # short
 ```
 git clone https://github.com/dahuebi/vsmomi.git
 cd vsmomi
-virtualenv .
-source bin/activate
-pip install -r requirements.txt
-export PYTHONPATH=$PWD
+# Linux
+source rc.sh
+# Windows
+call rc.cmd
 ```
 
 ### TODO
