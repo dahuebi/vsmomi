@@ -8,6 +8,7 @@ from .guest_delete import GuestDelete
 from .guest_download import GuestDownload
 from .guest_execute import GuestExecute
 from .guest_upload import GuestUpload
+from .guest_mktemp import GuestMkTemp
 from .ls import Ls
 from .m2m import M2M
 from .power import Power
@@ -28,4 +29,5 @@ commands = [
     Power,
     Snapshot,
     Help,
+    GuestMkTemp,
 ]

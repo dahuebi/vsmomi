@@ -29,6 +29,7 @@ class M2M(SubCommand):
         self.isM2M = True
         self.jsonObj = {}
         sys.stdout = sys.stderr
+        rc = 42
         try:
             rc = func(**kwargs)
         except:

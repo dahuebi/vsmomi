@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division,
 from builtins import *
 from future.builtins.disabled import *
 
+import sys
 import re
 import fnmatch
 import logging
@@ -17,9 +18,12 @@ class DryrunError(Exception):
     pass
 
 class ServiceInstanceAPI(object):
-    def __init__(self, host, username, password, dryrun=False):
+    def __init__(self, host, username, password, dryrun=False,
+            stdout=sys.stdout, stderr=sys.stderr):
+        self.stdout = stdout
+        self.stderr = stderr
         self.logger = logging.getLogger("vc")
-        self.logger.addHandler(logging.StreamHandler())
+        self.logger.addHandler(logging.StreamHandler(self.stderr))
         self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = False
         self.dryrun = dryrun

@@ -188,9 +188,14 @@ class Application(ServiceInstanceAPI):
         if args.saveAuth:
             cls.saveAuth(authFile, vcenter, vcUser, vcPass)
 
+        rc = 24
         if args.m2m:
-            return app.m2m(which=which, **parserArgs)
+            rc = app.m2m(which=which, **parserArgs)
         else:
             func = getattr(app, which)
-            return func(**parserArgs)
+            rc = func(**parserArgs)
+
+        if isinstance(rc, int):
+            return rc
+        return rc[0]
 
