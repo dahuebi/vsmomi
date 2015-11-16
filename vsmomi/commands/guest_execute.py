@@ -27,10 +27,15 @@ class GuestExecute(GuestCommand):
                 "--cmd", nargs=argparse.REMAINDER,
                 metavar="<cmd>",
                 help="Command to execute, will be joined.")
+        parser.add_argument(
+                "--timeout", type=float,
+                metavar="<timeout>",
+                default=None,
+                help="Command to execute, will be joined.")
         parser.set_defaults(guestExecuteArgs=commonArgs +
                 ["cmd"])
 
-    def guestExecute(self, cmd=[], **kwargs):
+    def guestExecute(self, cmd=[], timeout=None, **kwargs):
         if not cmd:
             raise RuntimeError("No command provided")
         tmpl = CT.compile(
@@ -66,27 +71,43 @@ class GuestExecute(GuestCommand):
                     spec=cmdspec)
             tasks[vm] = pid
 
+        if timeout is None:
+            timeout = 7*24*3600
+        timeEnd = time.time() + timeout
         # wait for completion
         sync = True
-        while sync and tasks:
-            time.sleep(1)
+        try:
+            while sync and tasks and timeEnd > time.time():
+                time.sleep(1)
+                for vm in tasks.keys():
+                    pid = tasks[vm]
+                    procInfo = pm.ListProcessesInGuest(vm=vm, auth=auth,
+                            pids=[pid])
+                    if procInfo:
+                        procInfo = procInfo[0]
+                        if procInfo.endTime is None:
+                            continue
+                        exitCode = procInfo.exitCode
+                        data = {vm.name: {"success": False, "prog": prog, "exitCode": exitCode}}
+                        if exitCode:
+                            self.output(data, tmpl=tmpl, level=logging.ERROR)
+                            rc = 2
+                        else:
+                            data[vm.name]["success"] = True
+                            self.output(data, tmpl=tmpl)
+                    del tasks[vm]
+        except KeyboardInterrupt:
+            rc = 3
+            pass
+        finally:
+            if tasks:
+                rc = 3
             for vm in tasks.keys():
                 pid = tasks[vm]
-                procInfo = pm.ListProcessesInGuest(vm=vm, auth=auth,
-                        pids=[pid])
-                if procInfo:
-                    procInfo = procInfo[0]
-                    if procInfo.endTime is None:
-                        continue
-                    exitCode = procInfo.exitCode
-                    data = {vm.name: {"success": False, "prog": prog, "exitCode": exitCode}}
-                    if exitCode:
-                        self.output(data, tmpl=tmpl, level=logging.ERROR)
-                        rc = 2
-                    else:
-                        data[vm.name]["success"] = True
-                        self.output(data, tmpl=tmpl)
-                del tasks[vm]
+                try:
+                    pm.TerminateProcessInGuest(vm=vm, auth=auth, pid=pid)
+                except vim.fault.GuestProcessNotFound:
+                    pass
 
         return rc
 

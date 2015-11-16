@@ -7,7 +7,6 @@ from future.builtins.disabled import *
 
 import re
 import os
-import requests
 
 from ._guest_common import *
 

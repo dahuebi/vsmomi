@@ -69,15 +69,14 @@ class GuestDownload(GuestCommand):
                 utcNaive = mtime.replace(tzinfo=None) - mtime.utcoffset()
                 ts = timestamp = (utcNaive - datetime.datetime(1970, 1, 1)).total_seconds()
                 url = fti.url
-                req = Request(url)
-                res = urlopen(req)
+                resp = requests.get(url, verify=False)
                 name = re.sub(r".*[\\/]", "", downloadFile)
                 dstFile = os.path.join(downloadDir, name)
                 data = {vmName: {"guestFilePath": guestFilePath, "localFile": dstFile,
-                        "success": res.getcode() == 200}}
-                if res.getcode() == 200:
+                        "success": resp.status_code == 200}}
+                if resp.status_code == 200:
                     with open(dstFile, "wb") as fp:
-                        fp.write(res.read())
+                        fp.write(resp.content)
                     os.utime(dstFile, (ts, ts))
                     self.output(data, tmpl=tmpl)
                 else:
