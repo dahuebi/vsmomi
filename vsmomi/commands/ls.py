@@ -147,6 +147,8 @@ class Ls(SubCommand):
 
             self.output(data, tmpl=rowTmpl)
 
+        return 0
+
     def _lsExtended(self, vm):
         CDROM = vim.vm.device.VirtualCdrom
         nics = self._getVmNics(vm)

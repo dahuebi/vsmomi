@@ -195,7 +195,7 @@ class Application(ServiceInstanceAPI):
             func = getattr(app, which)
             rc = func(**parserArgs)
 
-        if isinstance(rc, int):
-            return rc
-        return rc[0]
+        if isinstance(rc, (tuple, list)):
+            return rc[0]
+        return rc
 
