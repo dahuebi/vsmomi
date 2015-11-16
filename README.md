@@ -36,12 +36,13 @@ call rc.cmd
 ```
 usage: vs [-h] [--vcenter host] [--vc-user user] [--vc-pass password]
           [--auth auth.ini] [--save-auth]
-          {clone,destroy,edit,guest-delete,guest-download,guest-execute,guest-upload,ls,m2m,power,help}
+          {clone,customize,destroy,edit,guest-delete,guest-download,guest-execute,guest-upload,ls,m2m,power,help,guest-mktemp}
           ...
 
 positional arguments:
-  {clone,destroy,edit,guest-delete,guest-download,guest-execute,guest-upload,ls,m2m,power,help}
+  {clone,customize,destroy,edit,guest-delete,guest-download,guest-execute,guest-upload,ls,m2m,power,help,guest-mktemp}
     clone               Clone VMs
+    customize           Customize VMs
     destroy             Destroy VMs
     edit                Edit VM
     guest-delete        Delete from VMs
@@ -52,6 +53,7 @@ positional arguments:
     m2m                 Machine to machine interface
     power               Power VMs
     help                Show help of all command
+    guest-mktemp        Delete from VMs
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -93,6 +95,22 @@ optional arguments:
   --host host           Host name (which host to place the new VMs on)
   --poweron             Power the cloned VMs on
   --cms customization   Path to customication file
+
+--------------------------------------------------------------------------------
+Command 'customize'
+usage: vs customize [-h] [--cms customization]
+                    [--nic-add <nic-add> [<nic-add> ...]]
+                    name
+
+positional arguments:
+  name                  VM to clone from
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --cms customization   Path to customication file
+  --nic-add <nic-add> [<nic-add> ...]
+                        Customize network interfaces.
+                        [mac=,ip=x.x.x.x/mask,gw=]
 
 --------------------------------------------------------------------------------
 Command 'destroy'
@@ -174,7 +192,7 @@ optional arguments:
 --------------------------------------------------------------------------------
 Command 'guest-execute'
 usage: vs guest-execute [-h] --guest-user user --guest-pass password
-                        [--cmd ...]
+                        [--cmd ...] [--timeout <timeout>]
                         pattern [pattern ...]
 
 positional arguments:
@@ -186,6 +204,7 @@ optional arguments:
   --guest-pass password
                         Guest password
   --cmd ...             Command to execute, will be joined.
+  --timeout <timeout>   Command to execute, will be joined.
 
 --------------------------------------------------------------------------------
 Command 'guest-upload'
@@ -248,4 +267,21 @@ usage: vs help [-h]
 
 optional arguments:
   -h, --help  show this help message and exit
+
+--------------------------------------------------------------------------------
+Command 'guest-mktemp'
+usage: vs guest-mktemp [-h] --guest-user user --guest-pass password
+                       [--prefix prefix] [--suffix suffix]
+                       pattern [pattern ...]
+
+positional arguments:
+  pattern               VMs to select
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --guest-user user     Guest username
+  --guest-pass password
+                        Guest password
+  --prefix prefix       Prefix
+  --suffix suffix       Suffix
 ```
