@@ -34,6 +34,8 @@ class GuestDownload(GuestCommand):
                 ["files", "hostDir"])
 
     def guestDownload(self, files=[], hostDir=None, **kwargs):
+        assert isinstance(files, list)
+        assert isinstance(hostDir, str)
         vmDownloadFiles, downloadDir = files, hostDir
         tmpl = CT.compile(
 """ \

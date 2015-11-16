@@ -38,6 +38,7 @@ class GuestExecute(GuestCommand):
     def guestExecute(self, cmd=[], timeout=None, **kwargs):
         if not cmd:
             raise RuntimeError("No command provided")
+        assert isinstance(cmd, (list, tuple))
         tmpl = CT.compile(
 """ \
 #for name, v in $ns.items()

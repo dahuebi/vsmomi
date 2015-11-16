@@ -71,7 +71,6 @@ class Application(ServiceInstanceAPI):
         elif json:
             self.jsonObj.update(data)
 
-
     def _getVmNics(self, vm):
         NIC = vim.vm.device.VirtualEthernetCard
         devices = vm.config.hardware.device

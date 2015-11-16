@@ -28,6 +28,7 @@ class GuestDelete(GuestCommand):
                 ["files"])
 
     def guestDelete(self, files=[], recursive=True, **kwargs):
+        assert isinstance(files, list)
         rc = 0
         tmpl = CT.compile(
 """ \
