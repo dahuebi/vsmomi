@@ -9,3 +9,4 @@ script:
   - find vsmomi -iname '*.py' | xargs python -m py_compile
   - python setup.py build
   - python setup.py bdist
+  - python build-doc.py
