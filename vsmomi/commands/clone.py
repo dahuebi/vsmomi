@@ -67,7 +67,6 @@ class Clone(SubCommand):
                 metavar="customization",
                 help="Path to customication file")
 
-        # nic
         parser.set_defaults(cloneArgs=["name",
             "srcSnap", "target", "diskMode",
             "cpus", "memory", "host", "datastore", "poweron", "cms",
@@ -75,7 +74,6 @@ class Clone(SubCommand):
 
     def clone(self, name=None, srcSnap=None, target=None, diskMode=[], poweron=False,
             host=None, datastore=None, memory=None, cpus=None, cms=None, extraConfig=[]):
-        # TODO: nic
         assert name
 
         regexps = [re.compile("^{}$".format(re.escape(name)))]
@@ -131,9 +129,15 @@ class Clone(SubCommand):
         if fromVm.config.template and diskMode:
             raise RuntimeError("Template can not be linked")
 
+        if (linkedDisks or linkAll) and not fromSnapshot:
+            raise RuntimeError("Linking disk but no snapshot exist.")
+
         diskLocator = []
         DISK = vim.vm.device.VirtualDisk
-        for (ctrlNr, slotNr, disk) in VirtualMachineDiskLayout(fromVm):
+        fromVmDisks = fromVm
+        if fromSnapshot:
+            fromVmDisks = fromSnapshot
+        for (ctrlNr, slotNr, disk) in VirtualMachineDiskLayout(fromVmDisks):
             if not isinstance(disk, DISK):
                 # skip cdroms
                 continue
