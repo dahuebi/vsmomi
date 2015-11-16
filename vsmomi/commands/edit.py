@@ -33,7 +33,7 @@ class Edit(SubCommand):
         parser.add_argument(
                 "--extra-config", nargs="+", type=cmdLineParser.extraConfigType,
                 default=[],
-                metavar="extra-config", dest="extraConfig",
+                metavar="key=value", dest="extraConfig",
                 help="Extra config, use key=value")
         parser.add_argument(
                 "--network", type=str,
@@ -41,31 +41,30 @@ class Edit(SubCommand):
                 help="Set network for _ALL_ interfaces")
         parser.add_argument(
                 "--iso", type=cmdLineParser.isoType,
-                metavar="iso",
+                metavar="<[Datastore] path to iso>",
                 help="Load iso into cdrom, format:\n" \
                 "[Datastore] <path to iso>")
         parser.add_argument(
                 "--disk-new", nargs="+",
                 default=[], type=cmdLineParser.diskNewType,
-                metavar = "(<ctrlNr>-<slotNr>),size=<capacity>[mb|gb|tg]",
+                metavar = "<disk-new>",
                 dest="diskNew",
                 help="Add a disk\n" \
-                "[ctrlNr-slotNr,]size=capacity[GB]" \
-                "capacity: supports KB, MB, GB, TB, defaults to GB"
+                "[ctrlNr-slotNr,]size=capacity[mb|gb|tg]" \
                 )
         parser.add_argument(
                 "--disk-linked", nargs="+",
                 default=[], type=cmdLineParser.diskLinkedType,
-                metavar="[<ctrlNr>-<slotNr>,] vm[:snapshot],<ctrlNr>-<slotNr>",
+                metavar="<disk-linked>",
                 dest="diskLinked",
-                help="Add a disk\n" \
-                "sourceVm=<name>[:<snapshot>]:ctrlNr-slotNr"
+                help="Add a disk with delta backing\n" \
+                "[<ctrlNr>-<slotNr>,]vm[:snapshot],<ctrlNr>-<slotNr>"
                 )
 
         parser.add_argument(
                 "--disk-destroy", nargs="+",
                 default=[], type=cmdLineParser.diskDestroyType,
-                metavar="<ctrlNr>-<slotNr>",
+                metavar="<ctrlNr-slotNr>",
                 dest="diskDestroy",
                 help="List of [controllerNumber-slotNumber] to delete, ex: 0-1 2-3")
 

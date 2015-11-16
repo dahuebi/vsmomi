@@ -23,22 +23,18 @@ class Clone(SubCommand):
                 metavar="name",
                 help="VM to clone from")
         parser.add_argument(
-                "--src-snap", type=str,
+                "--snap", type=str,
                 metavar="<source snapshot>",
                 dest="srcSnap",
-                help="Snapshot to clone from, default to latest")
+                help="Snapshot to clone from, default is latest")
         parser.add_argument(
                 "--target", nargs="+", required=True,
                 metavar="target",
                 help="List of target VMs to create")
         parser.add_argument(
-                "--snap", type=str,
-                metavar="<target snapshot>",
-                help="If given, snapshot to create after cloning")
-        parser.add_argument(
-                "--disk-mode", nargs="*", type=cmdLineParser.diskModeType,
+                "--disk-mode", nargs="+", type=cmdLineParser.diskModeType,
                 default=["all"],
-                metavar="disk-mode", dest="diskMode",
+                metavar="<disk-mode>", dest="diskMode",
                 help="Delta backing for disks, only store deltas, default to *all*" +
                 "\n  all: link all disks\n  none: copy all disks\n  ctrlNr-slotNr: link specific disk")
         parser.add_argument(
@@ -52,7 +48,8 @@ class Clone(SubCommand):
         parser.add_argument(
                 "--extra-config", nargs="+", type=cmdLineParser.extraConfigType,
                 default=[],
-                metavar="extra-config", dest="extraConfig",
+                metavar="key=value",
+                dest="extraConfig",
                 help="Extra config, use key=value")
         parser.add_argument(
                 "--datastore", type=str,
@@ -72,13 +69,13 @@ class Clone(SubCommand):
 
         # nic
         parser.set_defaults(cloneArgs=["name",
-            "srcSnap", "target", "snap", "diskMode",
+            "srcSnap", "target", "diskMode",
             "cpus", "memory", "host", "datastore", "poweron", "cms",
             "extraConfig"])
 
-    def clone(self, name=None, srcSnap=None, target=None, snap=None, diskMode=[], poweron=False,
+    def clone(self, name=None, srcSnap=None, target=None, diskMode=[], poweron=False,
             host=None, datastore=None, memory=None, cpus=None, cms=None, extraConfig=[]):
-        # TODO: nic, extraConfig
+        # TODO: nic
         assert name
 
         regexps = [re.compile("^{}$".format(re.escape(name)))]
@@ -107,8 +104,8 @@ class Clone(SubCommand):
             elif srcSnap == tree.name:
                 fromSnapshot = tree.snapshot
                 break
-        if snap and not fromSnapshot:
-            raise LookupError("Snapshot '{}' not found".format(snap))
+        if srcSnap and not fromSnapshot:
+            raise LookupError("Snapshot '{}' not found".format(srcSnap))
 
         assert not fromSnapshot or isinstance(fromSnapshot, vim.vm.Snapshot)
         # evaluate disko mode
@@ -204,13 +201,6 @@ class Clone(SubCommand):
                 self.logger.error("Failed {}".format(repr(msg)))
                 rc = 2
                 continue
-            if snap:
-                try:
-                    self.snapshot(toName, snap)
-                except RuntimeError:
-                    rc = 3
-            if poweron:
-                self.power([toName], on=True)
 
         if rc:
             raise RuntimeError("Clone failed")

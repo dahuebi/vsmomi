@@ -28,7 +28,7 @@ class Ls(SubCommand):
                 help="List extended.")
         group.add_argument(
                 "-s", action="store_true", dest="shortList",
-                help="Only List names.")
+                help="List only names.")
         parser.set_defaults(lsArgs=["patterns", "shortList", "longList"])
 
     def ls(self, patterns=None, longList=False, shortList=False):

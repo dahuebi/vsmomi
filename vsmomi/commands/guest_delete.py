@@ -21,7 +21,7 @@ class GuestDelete(GuestCommand):
                 help="Delete from VMs")
         commonArgs = cls._addCommonArgs(cmdLineParser, parser)
         parser.add_argument(
-                "--files", nargs="+",
+                "--files", nargs="+", required=True,
                 metavar="file",
                 help="Files to delete")
         parser.set_defaults(guestDeleteArgs=commonArgs +

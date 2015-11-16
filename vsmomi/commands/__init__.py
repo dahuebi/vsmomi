@@ -12,6 +12,7 @@ from .ls import Ls
 from .m2m import M2M
 from .power import Power
 from .snapshot import Snapshot
+from .help import Help
 
 commands = [
     Clone,
@@ -26,4 +27,5 @@ commands = [
     M2M,
     Power,
     Snapshot,
+    Help,
 ]

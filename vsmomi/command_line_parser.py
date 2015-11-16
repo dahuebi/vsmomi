@@ -134,7 +134,7 @@ class CommandLineParser(object):
         self.parser = parser
         parser.add_argument(
                 "--dryrun", action="store_true",
-                help="Only check paring")
+                help=argparse.SUPPRESS)
         parser.add_argument(
                 "--vcenter",
                 type=str,
@@ -173,6 +173,24 @@ class CommandLineParser(object):
             if k in keys:
                 parserArgs[k] = v
         return parserArgs
+
+    def showFullHelp(self):
+        # http://stackoverflow.com/questions/20094215/argparse-subparser-monolithic-help-output
+        parser = self.parser
+        # print main help
+        print(parser.format_help())
+        # retrieve subparsers from parser
+        subparsers_actions = [
+            action for action in parser._actions 
+            if isinstance(action, argparse._SubParsersAction)]
+        # there will probably only be one subparser_action,
+        # but better save than sorry
+        for subparsers_action in subparsers_actions:
+            # get all subparsers and print help
+            for choice, subparser in subparsers_action.choices.items():
+                print("--------------------------------------------------------------------------------")
+                print("Command '{}'".format(choice))
+                print(subparser.format_help())
 
     def parse(self, argv=sys.argv[1:]):
         args, nestedArgv = self.parser.parse_known_args(argv)

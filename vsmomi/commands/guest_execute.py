@@ -25,11 +25,14 @@ class GuestExecute(GuestCommand):
         commonArgs = cls._addCommonArgs(cmdLineParser, parser)
         parser.add_argument(
                 "--cmd", nargs=argparse.REMAINDER,
+                metavar="<cmd>",
                 help="Command to execute, will be joined.")
         parser.set_defaults(guestExecuteArgs=commonArgs +
                 ["cmd"])
 
     def guestExecute(self, cmd=[], **kwargs):
+        if not cmd:
+            raise RuntimeError("No command provided")
         tmpl = CT.compile(
 """ \
 #for name, v in $ns.items()

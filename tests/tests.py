@@ -36,7 +36,6 @@ class TestVmomi(unittest.TestCase):
 ["destroy", "vm"],
 ["destroy", "vm", "~vm2"],
 ["clone", "vm", "--target=toVm"],
-["clone", "vm", "--target=toVm", "--src-snap=snap"],
 ["clone", "vm", "--target=toVm", "--snap=snap"],
 ["clone", "vm", "--target=toVm", "--disk-mode=all"],
 ["clone", "vm", "--target=toVm", "--disk-mode=none"],
