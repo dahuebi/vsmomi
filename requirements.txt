@@ -1,0 +1,4 @@
+future
+requests
+pyvmomi
+Cheetah

@@ -1,0 +1,4 @@
+auth.ini
+*.pyc
+doc-py
+bin/

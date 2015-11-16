@@ -1,0 +1,4 @@
+[vcenter host name/ip]
+username = <Username>
+password = <base64 encoded password>
+
