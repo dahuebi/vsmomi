@@ -1,10 +1,10 @@
 ![alt text](https://travis-ci.org/dahuebi/vsmomi.svg?branch=master "travis build status")
-
 vsmomi
 ======
 
 VMWare vSphere CLI.
 
+[travis](https://travis-ci.org/dahuebi/vsmomi?branch=master)
 [pyvmomi](https://github.com/vmware/pyvmomi) (VMware vSphere API Python Bindings).
 
 ### Example Usage
