@@ -66,7 +66,9 @@ class Application(ServiceInstanceAPI):
 
     def _checkPatternType(self, patterns):
         self._checkType(patterns, list)
-        [self._checkType(x, type(re.compile(""))) for x in patterns]
+        reType = type(re.compile(""))
+        types = (vim.VirtualMachine, reType, str, )
+        [self._checkType(x, types) for x in patterns]
 
     @classmethod
     def convert(cls, data):

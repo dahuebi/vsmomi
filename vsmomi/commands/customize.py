@@ -38,7 +38,7 @@ class Customize(SubCommand):
 
     @export
     def customize(self, name=None, cms=None, nicAdd=[]):
-        self._checkType(name, str)
+        self._checkType(name, (str, vim.VirtualMachine))
         self._checkType(cms, (str, type(None)))
         self._checkType(nicAdd, list)
         for nc in nicAdd:

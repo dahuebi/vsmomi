@@ -76,7 +76,7 @@ class Edit(SubCommand):
     @export
     def edit(self, name=None, cpus=None, memory=None, extraConfig=[], network=None, iso=None,
             diskDestroy=[], diskNew=[], diskLinked=[]):
-        self._checkType(name, str)
+        self._checkType(name, (str, vim.VirtualMachine))
         self._checkType(memory, (type(None), int))
         self._checkType(cpus, (type(None), int))
         self._checkType(extraConfig, list)

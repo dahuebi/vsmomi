@@ -75,7 +75,7 @@ class Clone(SubCommand):
     @export
     def clone(self, name=None, srcSnap=None, target=None, diskMode=[], poweron=False,
             host=None, datastore=None, memory=None, cpus=None, cms=None, extraConfig=[]):
-        self._checkType(name, str)
+        self._checkType(name, (str, vim.VirtualMachine))
         self._checkType(srcSnap, (type(None), str))
         self._checkType(target, list)
         [self._checkType(x, str) for x in target]

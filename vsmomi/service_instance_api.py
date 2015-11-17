@@ -5,6 +5,8 @@ from __future__ import (absolute_import, division,
 from builtins import *
 from future.builtins.disabled import *
 
+from six import string_types
+
 import sys
 import re
 import fnmatch
@@ -140,11 +142,32 @@ class ServiceInstanceAPI(object):
         """
         Returns all vms
         """
-        assert isinstance(regexps, (list, tuple))
-        allVms = map(lambda vm: (vm.name, vm),
-                self._getAllObjs([vim.VirtualMachine]))
-        if sort and not regexps:
+        _regexps = list(regexps)
+        inputVms = []
+        if sort and not _regexps:
             regexps = [re.compile(".*")]
+        regexps = []
+        reType = type(re.compile(""))
+        for pattern in _regexps:
+            if isinstance(pattern, reType):
+                regexps.append(pattern)
+            elif isinstance(pattern, string_types):
+                regexp = None
+                if pattern.startswith("~"):
+                    regexp = re.compile(pattern[1:])
+                else:
+                    regexp = re.compile(fnmatch.translate(pattern))
+                regexps.append(regexp)
+            elif isinstacne(pattern, vim.VirtualMachine):
+                inputVms.append(pattern)
+            else:
+                raise RuntimeError("'{}' unsupported".format(pattern))
+
+        allVms = []
+        if regexps or not inputVms:
+            allVms += map(lambda vm: (vm.name, vm),
+                    self._getAllObjs([vim.VirtualMachine]))
+
         vms = []
         if regexps:
             for name, vm in allVms:
@@ -154,10 +177,13 @@ class ServiceInstanceAPI(object):
                         break
         else:
             vms = list(allVms)
+        if inputVms:
+            vms += [(vm.name, vm) for vm in inputVms]
         if sort:
             vms = sorted(vms, key=lambda x: x[0])
         if not vms:
             raise LookupError("No VMs found")
+
         return list(map(lambda item: item[1], vms))
 
     def getNetworks(self):
