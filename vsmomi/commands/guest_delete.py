@@ -27,6 +27,7 @@ class GuestDelete(GuestCommand):
         parser.set_defaults(guestDeleteArgs=commonArgs +
                 ["files"])
 
+    @export
     def guestDelete(self, files=[], recursive=True, **kwargs):
         assert isinstance(files, list)
         rc = 0

@@ -33,6 +33,7 @@ class GuestDownload(GuestCommand):
         parser.set_defaults(guestDownloadArgs=commonArgs +
                 ["files", "hostDir"])
 
+    @export
     def guestDownload(self, files=[], hostDir=None, **kwargs):
         assert isinstance(files, list)
         assert isinstance(hostDir, str)

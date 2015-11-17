@@ -33,6 +33,7 @@ class GuestUpload(GuestCommand):
         parser.set_defaults(guestUploadArgs=commonArgs +
                 ["files", "guestDir"])
 
+    @export
     def guestUpload(self, files=[], guestDir=None, **kwargs):
         assert isinstance(files, list)
         assert isinstance(guestDir, str)

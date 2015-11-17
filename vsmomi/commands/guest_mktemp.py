@@ -33,6 +33,7 @@ class GuestMkTemp(GuestCommand):
         parser.set_defaults(guestMktempArgs=commonArgs +
                 ["prefix", "suffix"])
 
+    @export
     def guestMktemp(self, prefix="", suffix="", **kwargs):
         rc = 0
         tmpl = CT.compile(

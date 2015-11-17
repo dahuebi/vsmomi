@@ -30,6 +30,7 @@ class Power(SubCommand):
         parser.set_defaults(powerArgs=["patterns",
             "on", "off", "reset", "halt", "reboot", "shutdown"])
 
+    @export
     def power(self, patterns=[], on=False, off=False, reset=False,
             shutdown=False, halt=False, reboot=False):
         tmpl = CT.compile(

@@ -73,6 +73,7 @@ class Edit(SubCommand):
             "cpus", "memory", "diskDestroy", "network", "iso",
             "extraConfig", "diskNew", "diskLinked"])
 
+    @export
     def edit(self, name=None, cpus=None, memory=None, extraConfig=[], network=None, iso=None,
             diskDestroy=[], diskNew=[], diskLinked=[]):
         regexps = [re.compile("^{}$".format(re.escape(name)))]

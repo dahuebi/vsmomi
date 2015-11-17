@@ -36,6 +36,7 @@ class Customize(SubCommand):
 
         parser.set_defaults(cloneArgs=["name", "csm", "nicAdd"])
 
+    @export
     def customize(self, name=None, cms=None, nicAdd=[]):
         regexps = [re.compile("^{}$".format(re.escape(name)))]
         vm = self.getRegisteredVms(regexps=regexps)[0]

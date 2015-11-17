@@ -18,6 +18,7 @@ class Snapshot(SubCommand):
         # TODO
         pass
 
+    @export
     def snapshot(self, name=None, snap=None):
         regexps = [re.compile("^{}$".format(re.escape(name)))]
         vm = self.getRegisteredVms(regexps=regexps)[0]

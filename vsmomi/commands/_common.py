@@ -13,3 +13,4 @@ from pyVmomi import vim
 from .sub_command import SubCommand
 from ..virtual_machine_disk_layout import VirtualMachineDiskLayout
 from ..vctask import VcTask
+from ..api import export

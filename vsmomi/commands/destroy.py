@@ -24,6 +24,7 @@ class Destroy(SubCommand):
                 help="VMs to destroy, name MUST match, no wildcard/regexps.")
         parser.set_defaults(destroyArgs=["names"])
 
+    @export
     def destroy(self, names=[]):
         # no wildcard or regexp patterns allowed
         if not names:

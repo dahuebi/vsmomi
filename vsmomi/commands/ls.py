@@ -31,6 +31,7 @@ class Ls(SubCommand):
                 help="List only names.")
         parser.set_defaults(lsArgs=["patterns", "shortList", "longList"])
 
+    @export
     def ls(self, patterns=None, longList=False, shortList=False):
         maxNameLength = 30
         printHdr = True

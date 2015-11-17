@@ -72,6 +72,7 @@ class Clone(SubCommand):
             "cpus", "memory", "host", "datastore", "poweron", "cms",
             "extraConfig"])
 
+    @export
     def clone(self, name=None, srcSnap=None, target=None, diskMode=[], poweron=False,
             host=None, datastore=None, memory=None, cpus=None, cms=None, extraConfig=[]):
         assert name

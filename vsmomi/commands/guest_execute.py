@@ -35,6 +35,7 @@ class GuestExecute(GuestCommand):
         parser.set_defaults(guestExecuteArgs=commonArgs +
                 ["cmd"])
 
+    @export
     def guestExecute(self, cmd=[], timeout=None, **kwargs):
         if not cmd:
             raise RuntimeError("No command provided")
