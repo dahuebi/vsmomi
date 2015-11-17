@@ -1,4 +1,5 @@
 future
+six
 requests
 pyvmomi
 Cheetah
