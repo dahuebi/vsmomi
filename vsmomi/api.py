@@ -34,3 +34,6 @@ class API(object):
                     func = getattr(obj, attr)
                     setattr(self, attr, func)
 
+    @export
+    def getVms(self, pattern, sort=True):
+        return self.__app.getRegisteredVms(pattern, sort)

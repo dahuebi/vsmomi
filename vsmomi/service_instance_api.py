@@ -142,7 +142,10 @@ class ServiceInstanceAPI(object):
         """
         Returns all vms
         """
-        _regexps = list(regexps)
+        _regexps = regexps
+        if not isinstance(regexps, (list, tuple)):
+            _regexps = [regexps]
+
         inputVms = []
         if sort and not _regexps:
             regexps = [re.compile(".*")]
@@ -158,7 +161,7 @@ class ServiceInstanceAPI(object):
                 else:
                     regexp = re.compile(fnmatch.translate(pattern))
                 regexps.append(regexp)
-            elif isinstacne(pattern, vim.VirtualMachine):
+            elif isinstance(pattern, vim.VirtualMachine):
                 inputVms.append(pattern)
             else:
                 raise RuntimeError("'{}' unsupported".format(pattern))
