@@ -75,7 +75,28 @@ class Clone(SubCommand):
     @export
     def clone(self, name=None, srcSnap=None, target=None, diskMode=[], poweron=False,
             host=None, datastore=None, memory=None, cpus=None, cms=None, extraConfig=[]):
-        assert name
+        self._checkType(name, str)
+        self._checkType(srcSnap, (type(None), str))
+        self._checkType(target, list)
+        [self._checkType(x, str) for x in target]
+        self._checkType(diskMode, list)
+        for dm in diskMode:
+            if isinstance(dm, tuple):
+                [self._checkType(x, int) for x in dm]
+                assert len(dm) == 2
+            else:
+                self._checkType(dm, (str, type(None)))
+        self._checkType(poweron, bool)
+        self._checkType(host, (type(None), str))
+        self._checkType(datastore, (type(None), str))
+        self._checkType(memory, (type(None), int))
+        self._checkType(cpus, (type(None), int))
+        self._checkType(cms, (type(None), str))
+        self._checkType(extraConfig, list)
+        for ec in extraConfig:
+            self._checkType(ec, tuple)
+            [self._checkType(x, str) for x in ec]
+            assert len(ec) == 2
 
         regexps = [re.compile("^{}$".format(re.escape(name)))]
         fromVm = self.getRegisteredVms(regexps=regexps)[0]

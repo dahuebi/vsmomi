@@ -26,6 +26,9 @@ class Destroy(SubCommand):
 
     @export
     def destroy(self, names=[]):
+        self._checkType(names, list)
+        [self._checkType(x, str) for x in names]
+
         # no wildcard or regexp patterns allowed
         if not names:
             raise RuntimeError("Must give vm")

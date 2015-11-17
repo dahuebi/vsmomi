@@ -76,6 +76,48 @@ class Edit(SubCommand):
     @export
     def edit(self, name=None, cpus=None, memory=None, extraConfig=[], network=None, iso=None,
             diskDestroy=[], diskNew=[], diskLinked=[]):
+        self._checkType(name, str)
+        self._checkType(memory, (type(None), int))
+        self._checkType(cpus, (type(None), int))
+        self._checkType(extraConfig, list)
+        for ec in extraConfig:
+            self._checkType(ec, tuple)
+            [self._checkType(x, str) for x in ec]
+            assert len(ec) == 2
+        self._checkType(network, (type(None), str))
+        self._checkType(iso, (type(None), str))
+        self._checkType(diskDestroy, list)
+        for dd in diskDestroy:
+            self._checkType(dd, tuple)
+            [self._checkType(x, int) for x in dd]
+            assert len(dd) == 2
+        self._checkType(diskLinked, list)
+        for dl in diskLinked:
+            self._checkType(dl, dict)
+            assert "slot" in dl
+            assert "vm" in dl
+            assert "vmSlot" in dl
+            self._checkType(dl["slot"], tuple)
+            [self._checkType(x, (type(None), int)) for x in dl["slot"]]
+            assert len(dl["slot"]) == 2
+            self._checkType(dl["vmSlot"], tuple)
+            [self._checkType(x, int) for x in dl["vmSlot"]]
+            assert len(dl["vmSlot"]) == 2
+            self._checkType(dl["vm"], tuple)
+            assert len(dl["vm"]) == 2
+            self._checkType(dl["vm"][0], str)
+            self._checkType(dl["vm"][1], (type(None), str))
+        self._checkType(diskNew, list)
+        for dn in diskNew:
+            self._checkType(dn, dict)
+            assert "slot" in dn
+            assert "capacity" in dn
+            self._checkType(dn["slot"], tuple)
+            [self._checkType(x, (type(None), int)) for x in dn["slot"]]
+            assert len(dn["slot"]) == 2
+            self._checkType(dn["capacity"], int)
+
+
         regexps = [re.compile("^{}$".format(re.escape(name)))]
         vm = self.getRegisteredVms(regexps=regexps)[0]
 

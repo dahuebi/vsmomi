@@ -29,7 +29,10 @@ class GuestDelete(GuestCommand):
 
     @export
     def guestDelete(self, files=[], recursive=True, **kwargs):
-        assert isinstance(files, list)
+        self._checkType(files, list)
+        [self._checkType(x, str) for x in files]
+        self._checkType(recursive, bool)
+
         rc = 0
         tmpl = CT.compile(
 """ \

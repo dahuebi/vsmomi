@@ -20,6 +20,9 @@ class Snapshot(SubCommand):
 
     @export
     def snapshot(self, name=None, snap=None):
+        self._checkType(name, str)
+        self._checkType(snap, str)
+
         regexps = [re.compile("^{}$".format(re.escape(name)))]
         vm = self.getRegisteredVms(regexps=regexps)[0]
         task = vm.CreateSnapshot(name=snap, memory=False, quiesce=False)

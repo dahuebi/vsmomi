@@ -35,8 +35,10 @@ class GuestUpload(GuestCommand):
 
     @export
     def guestUpload(self, files=[], guestDir=None, **kwargs):
-        assert isinstance(files, list)
-        assert isinstance(guestDir, str)
+        self._checkType(files, list)
+        [self._checkType(x, str) for x in files]
+        self._checkType(guestDir, str)
+
         tmpl = CT.compile(
 """ \
 #for name, v in $ns.items()

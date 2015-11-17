@@ -33,6 +33,10 @@ class Ls(SubCommand):
 
     @export
     def ls(self, patterns=None, longList=False, shortList=False):
+        self._checkPatternType(patterns)
+        self._checkType(longList, bool)
+        self._checkType(shortList, bool)
+
         maxNameLength = 30
         printHdr = True
         hdrTmpl = CT.compile(

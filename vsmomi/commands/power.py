@@ -33,6 +33,14 @@ class Power(SubCommand):
     @export
     def power(self, patterns=[], on=False, off=False, reset=False,
             shutdown=False, halt=False, reboot=False):
+        self._checkPatternType(patterns)
+        self._checkType(on, bool)
+        self._checkType(off, bool)
+        self._checkType(reset, bool)
+        self._checkType(shutdown, bool)
+        self._checkType(halt, bool)
+        self._checkType(reboot, bool)
+
         tmpl = CT.compile(
 """ \
 #for $name, $v in $ns.items()

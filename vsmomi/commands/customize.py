@@ -38,6 +38,20 @@ class Customize(SubCommand):
 
     @export
     def customize(self, name=None, cms=None, nicAdd=[]):
+        self._checkType(name, str)
+        self._checkType(cms, (str, type(None)))
+        self._checkType(nicAdd, list)
+        for nc in nicAdd:
+            assert "map" in nc
+            assert "ip" in nc
+            assert "mask" in nc
+            assert "gw" in nc
+            self._checkType(nc["map"], str)
+            self._checkType(nc["ip"], str)
+            self._checkType(nc["mask"], int)
+            self._checkType(nc["gw"], str)
+
+
         regexps = [re.compile("^{}$".format(re.escape(name)))]
         vm = self.getRegisteredVms(regexps=regexps)[0]
         customSpec = vim.vm.customization.Specification()

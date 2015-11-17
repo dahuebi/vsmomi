@@ -5,6 +5,8 @@ from __future__ import (absolute_import, division,
 from builtins import *
 from future.builtins.disabled import *
 
+from six import string_types
+
 import re
 import logging
 import sys
@@ -44,6 +46,27 @@ class Application(ServiceInstanceAPI):
                 pass
         raise AttributeError("'{}' object has no attribute '{}'".format(
                 type(self).__name__, name))
+
+    def _checkType(self, param, types):
+        # fix str type, user six,string_types
+        _types = []
+        if not isinstance(types, (tuple, list)):
+            _types.append(types)
+        else:
+            _types += list(types)
+        types = []
+        for typ in _types:
+            if typ is str:
+                types += string_types
+            else:
+                types.append(typ)
+
+        types = tuple(set(types))
+        assert isinstance(param, types), "{} in {})".format(type(param), types)
+
+    def _checkPatternType(self, patterns):
+        self._checkType(patterns, list)
+        [self._checkType(x, type(re.compile(""))) for x in patterns]
 
     @classmethod
     def convert(cls, data):

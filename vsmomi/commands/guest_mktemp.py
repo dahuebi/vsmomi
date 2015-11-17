@@ -35,6 +35,8 @@ class GuestMkTemp(GuestCommand):
 
     @export
     def guestMktemp(self, prefix="", suffix="", **kwargs):
+        self._checkType(prefix, str)
+        self._checkType(suffix, str)
         rc = 0
         tmpl = CT.compile(
 """ \

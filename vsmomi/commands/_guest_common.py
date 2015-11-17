@@ -49,7 +49,10 @@ class GuestCommand(SubCommand):
                 username=username, password=password)
 
     def _guestCommon(self, patterns=["~^$"], guestUser=None, guestPass=None):
-        # convert to propert str (newstr from feature does not work)
+        self._checkPatternType(patterns)
+        self._checkType(guestUser, str)
+        self._checkType(guestPass, str)
+        # convert to proper str (newstr from feature does not work)
         guestUser, guestPass = "{}".format(guestUser), "{}".format(guestPass)
         auth = self._getGuestAuth(guestUser, guestPass)
         vms = self.getRegisteredVms(regexps=patterns)
