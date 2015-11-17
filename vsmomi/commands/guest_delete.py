@@ -49,12 +49,9 @@ class GuestDelete(GuestCommand):
                 self.logger.error("VMTools not OK: {}".format(vmName))
                 rc = 1
                 continue
-            guestId = vm.summary.config.guestId
-            sep = "/"
-            if guestId.lower().startswith("win"):
-                sep = r"\\"
+            (sep, pathsep) = self.getGuestSeparators(vm)
             for file_ in files:
-                guestFilePath = re.sub(r"[\\/]", sep, file_)
+                guestFilePath = self.toGuestPath(sep, file_)
                 data = {vmName: {"guestFilePath": guestFilePath, "success": False}}
                 try:
                     try:

@@ -27,6 +27,7 @@ from pyVmomi import vim
 
 from .service_instance_api import ServiceInstanceAPI
 from .command_line_parser import CommandLineParser
+from .api import export
 
 from . import commands
 
@@ -133,6 +134,29 @@ class Application(ServiceInstanceAPI):
         if number is not None:
             return eval("{}".format(number))
         return None
+
+    @export
+    def getGuestSeparators(self, vm):
+        self._checkType(vm, vim.VirtualMachine)
+        guestId = vm.summary.config.guestId
+        if guestId.lower().startswith("win"):
+            return ("\\", ";")
+        return ("/", ":")
+
+    @export
+    def toGuestPath(self, vmOrSep, path):
+        sep = vmOrSep
+        if isinstance(vmOrSep, vim.VirtualMachine):
+            (sep, _) = self.getGuestSeparators(vmOrSep)
+
+        if sep == "/" and re.search(r"^[a-z]:[/\\]", path):
+            raise RuntimeError("Trying to access windows path on unix")
+        if sep != "/" and re.search("^/", path):
+            raise RuntimeError("Trying to access unix path on windows")
+
+        path = path.replace("/", sep)
+        path = path.replace("\\", sep)
+        return path
 
     @classmethod
     def loadAuth(cls, authFile, vcenter=None):

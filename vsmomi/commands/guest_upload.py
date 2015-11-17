@@ -60,11 +60,8 @@ class GuestUpload(GuestCommand):
                 self.logger.error("VMTools not OK: {}".format(vmName))
                 rc = 1
                 continue
-            guestId = vm.summary.config.guestId
-            sep = "/"
-            if guestId.lower().startswith("win"):
-                sep = r"\\"
-            uploadDir = re.sub(r"[\\/]", sep, vmUploadDir)
+            (sep, pathsep) = self.getGuestSeparators(vm)
+            uploadDir = self.toGuestPath(sep, vmUploadDir)
             uploadDir = uploadDir.rstrip(sep)
             for uploadFile in uploadFiles:
                 guestFilePath = "{}{}{}".format(
