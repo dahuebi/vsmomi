@@ -1,12 +1,13 @@
 ![alt text](https://travis-ci.org/dahuebi/vsmomi.svg?branch=master "travis build status")
-![alt text](http://vsmomi.readthedocs.org/?badge=latest "readthedocs status")
+[![Documentation Status](https://readthedocs.org/projects/vsmomi/badge/?version=latest)](http://vsmomi.readthedocs.org/?badge=latest)
+
 vsmomi
 ======
 
 VMWare vSphere CLI.
 
-[vsmomi on travis](https://travis-ci.org/dahuebi/vsmomi?branch=master)
-[vsmomi on readthedocs](http://vsmomi.readthedocs.org/)
+* [travis](https://travis-ci.org/dahuebi/vsmomi?branch=master)
+* [readthedocs](http://vsmomi.readthedocs.org/)
 
 [pyvmomi](https://github.com/vmware/pyvmomi) (VMware vSphere API Python Bindings).
 
