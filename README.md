@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dahuebi/vsmomi)](https://travis-ci.org/dahuebi/vsmomi.svg?branch=master)
+[![Build Status](https://travis-ci.org/dahuebi/vsmomi.svg?branch=master)](https://travis-ci.org/dahuebi/vsmomi)
 [![Documentation Status](https://readthedocs.org/projects/vsmomi/badge/?version=latest)](http://vsmomi.readthedocs.org/?badge=latest)
 
 vsmomi
