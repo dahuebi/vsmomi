@@ -48,13 +48,10 @@ class GuestExecute(GuestCommand):
 #end for \
 """)
         rc = 0
-        cmd = " ".join(cmd)
-        prog = cmd
-        args = ""
-        try:
-            (prog, args) = cmd.split(" ", 1)
-        except ValueError:
-            pass
+        prog = cmd[0]
+        # TODO: guest os dependent escape for "
+        #args = " ".join(['"{}"'.format(re.sub('"', '^"', s)) for s in  cmd[1:]])
+        args = " ".join(['"{}"'.format(s) for s in  cmd[1:]])
         wd = re.sub(r"[^\\/]*$", "", prog)
         cmdspec = vim.vm.guest.ProcessManager.ProgramSpec(
                 arguments=args, programPath=prog,
