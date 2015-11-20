@@ -96,6 +96,8 @@ class ServiceInstanceAPI(object):
         for p in pools:
             hosts = list(set([vm.runtime.host for vm in p.vm]))
             for h in hosts:
+                if h is None:
+                    continue
                 name = h.name
                 if name.lower().startswith(hostname.lower()):
                     # found resource pool
