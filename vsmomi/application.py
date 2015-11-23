@@ -156,7 +156,7 @@ class Application(ServiceInstanceAPI):
 
         path = path.replace("/", sep)
         path = path.replace("\\", sep)
-        return path
+        return "{}".format(path)
 
     @classmethod
     def loadAuth(cls, authFile, vcenter=None):
