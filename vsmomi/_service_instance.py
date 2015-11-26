@@ -11,7 +11,10 @@ import atexit
 
 import requests
 # disable warnings
-requests.packages.urllib3.disable_warnings()
+try:
+    requests.packages.urllib3.disable_warnings()
+except AttributeError:
+    pass
 
 from pyVmomi import vim
 from pyVim.connect import SmartConnect, Disconnect
