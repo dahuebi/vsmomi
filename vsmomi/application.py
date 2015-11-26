@@ -34,10 +34,18 @@ from . import commands
 class Application(ServiceInstanceAPI):
     def __init__(self, *args, **kwargs):
         super(Application, self).__init__(*args, **kwargs)
-        self.isM2M = False
+        self.setIsM2M(False)
         self.subCommands = []
         for mod in commands.commands:
             self.subCommands.append(mod(self))
+
+    @property
+    def isM2M(self):
+        return self._isM2M
+
+    def setIsM2M(self, setValue=True):
+        assert isinstance(setValue, bool)
+        self._isM2M = setValue
 
     def __getattr__(self, name):
         for subCommand in self.subCommands:
