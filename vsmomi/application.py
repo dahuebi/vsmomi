@@ -2,8 +2,9 @@
 from __future__ import (absolute_import, division,
         print_function, unicode_literals)
 
-from builtins import *
 from future.builtins.disabled import *
+from builtins import *
+from future.builtins.disabled import raw_input
 
 from six import string_types
 
@@ -16,6 +17,7 @@ import configparser
 import json
 import pprint
 import traceback
+import getpass
 
 import codecs
 if not sys.stdout.isatty():
@@ -174,12 +176,10 @@ class Application(ServiceInstanceAPI):
         if not vcenter:
             vcenter = cfg.sections()[0]
         if cfg.has_section(vcenter):
-            if (not cfg.has_option(vcenter, "username") or
-                    not cfg.has_option(vcenter, "password")):
-                raise LookupError("{} section {} has no username/password".format(
-                    authFile, vcenter))
-            vcUser = cfg.get(vcenter, "username")
-            vcPass = cfg.get(vcenter, "password")
+            if cfg.has_option(vcenter, "username"):
+                vcUser = cfg.get(vcenter, "username")
+            if cfg.has_option(vcenter, "password"):
+                vcPass = cfg.get(vcenter, "password")
         return vcenter, vcUser, vcPass
 
     @classmethod
@@ -195,7 +195,7 @@ class Application(ServiceInstanceAPI):
             cfg.write(fp)
 
     @classmethod
-    def loadCreds(cls, authFile, vcenter, vcUser, vcPass):
+    def loadCreds(cls, authFile, vcenter, vcUser, vcPass, askCred):
         # check environment
         if not vcenter:
             vcenter = os.environ.get("VC_VCENTER", None)
@@ -213,6 +213,19 @@ class Application(ServiceInstanceAPI):
                 vcUser = _vcUser
             if not vcPass:
                 vcPass = _vcPass
+
+        isTty = sys.stdin.isatty()
+        if isTty:
+            if askCred or not vcenter:
+                _vcenter = input("VCenter ({}): ".format(vcenter))
+                vcenter = _vcenter if _vcenter else vcenter
+            if askCred or not vcUser:
+                _vcUser = input("User ({}): ".format(vcUser))
+                vcUser = _vcUser if _vcUser else vcUser
+            if askCred or not vcPass:
+                passStars = "*****" if vcPass else ""
+                _vcPass = getpass.getpass("Password ({}): ".format(passStars))
+                vcPass = _vcPass if _vcPass else vcPass
 
         if vcPass:
             try:
@@ -235,9 +248,12 @@ class Application(ServiceInstanceAPI):
             args.vcPass = "vc_pass"
             args.saveAuth = False
 
+        askCred = args.askCred
+        if askCred and not sys.stdin.isatty():
+            raise RuntimeError("--ask-cred is only supported with a tty")
         vcenter = args.vcenter
         vcenter, vcUser, vcPass = cls.loadCreds(args.auth,
-                args.vcenter, args.vcUser, args.vcPass)
+                args.vcenter, args.vcUser, args.vcPass, askCred=askCred)
 
         # check credentials
         app = Application(vcenter, vcUser, vcPass, dryrun=args.dryrun)
