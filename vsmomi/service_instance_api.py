@@ -170,8 +170,8 @@ class ServiceInstanceAPI(object):
 
         allVms = []
         if regexps or not inputVms:
-            allVms += map(lambda vm: (vm.name, vm),
-                    self._getAllObjs([vim.VirtualMachine]))
+            vmDict = self._getAllObjs([vim.VirtualMachine])
+            allVms = [(name, vm) for (vm, name) in vmDict.items()]
 
         vms = []
         if regexps:
@@ -189,7 +189,7 @@ class ServiceInstanceAPI(object):
         if not vms:
             raise LookupError("No VMs found")
 
-        return list(map(lambda item: item[1], vms))
+        return [item[1] for item in vms]
 
     def getNetworks(self):
         """
