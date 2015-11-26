@@ -170,6 +170,9 @@ class CommandLineParser(object):
                 "--save-auth",
                 action="store_true", dest="saveAuth",
                 help="Save/update auth file")
+        parser.add_argument(
+                "--ask-cred", action="store_true", dest="askCred",
+                help="Force user to enter credentials")
         subparsers = parser.add_subparsers(dest="which")
         subparsers.required = True
         for mod in commands.commands:

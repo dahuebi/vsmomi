@@ -2,4 +2,4 @@ auth.ini
 *.pyc
 doc-py
 bin/
-Scripts/
+env/

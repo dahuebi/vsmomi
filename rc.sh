@@ -1,5 +1,7 @@
-python -m virtualenv .
+VENV=env
+python -m virtualenv $VENV
 
-source bin/activate
+source $VENV/bin/activate
 pip install -r requirements.txt
 export PYTHONPATH=$PWD
+export PATH=$PWD/bin:$PATH

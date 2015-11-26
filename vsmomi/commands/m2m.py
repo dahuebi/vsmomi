@@ -26,7 +26,7 @@ class M2M(SubCommand):
         assert which
         assert which != "m2m"
         func = getattr(self, which)
-        self.isM2M = True
+        self.setIsM2M(True)
         self.jsonObj = {}
         sys.stdout = sys.stderr
         rc = 42

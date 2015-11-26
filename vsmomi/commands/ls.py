@@ -68,8 +68,9 @@ class Ls(SubCommand):
     CPUs:   {}
     Memory: {}
     IP:     {}
-    Tools:  {}""".format(name+":",
-    v["power"], v["numCPUs"], v["memorySizeMB"], v["ipAddress"], v["toolsStatus"])%> \
+    Tools:  {}
+    Host:   {}""".format(name+":",
+    v["power"], v["numCPUs"], v["memorySizeMB"], v["ipAddress"], v["toolsStatus"], v["host"])%> \
 #if $v["networks"]
     Networks:
 #for $network in $v["networks"]
@@ -156,6 +157,9 @@ class Ls(SubCommand):
 
     def _lsExtended(self, vm):
         CDROM = vim.vm.device.VirtualCdrom
+        host = vm.runtime.host
+        if host:
+            host = host.name
         nics = self._getVmNics(vm)
         macs = list(map(lambda nic: nic.macAddress, nics))
         networks = list(map(lambda nic: nic.backing.deviceName, nics))
@@ -199,6 +203,6 @@ class Ls(SubCommand):
                 snapshot = snapshot[name]
             snapshot[snap.name] = {}
         extendedData = {"macAddresses": macs, "networks": networks,
-                "cdroms": cdroms, "disks": disks, "snapshots": snapshots}
+                "cdroms": cdroms, "disks": disks, "snapshots": snapshots, "host": host}
         return extendedData
 
