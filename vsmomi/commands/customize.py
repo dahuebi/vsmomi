@@ -23,7 +23,7 @@ class Customize(SubCommand):
                 metavar="name",
                 help="VM to clone from")
         parser.add_argument(
-                "--cms", type=str,
+                "--csm", type=str,
                 metavar="customization",
                 help="Path to customication file")
         parser.add_argument(
@@ -37,9 +37,9 @@ class Customize(SubCommand):
         parser.set_defaults(cloneArgs=["name", "csm", "nicAdd"])
 
     @export
-    def customize(self, name=None, cms=None, nicAdd=[]):
+    def customize(self, name=None, csm=None, nicAdd=[]):
         self._checkType(name, (str, vim.VirtualMachine))
-        self._checkType(cms, (str, type(None)))
+        self._checkType(csm, (str, type(None)))
         self._checkType(nicAdd, list)
         for nc in nicAdd:
             assert "map" in nc
@@ -55,7 +55,7 @@ class Customize(SubCommand):
         regexps = [re.compile("^{}$".format(re.escape(name)))]
         vm = self.getRegisteredVms(regexps=regexps)[0]
         customSpec = vim.vm.customization.Specification()
-        if cms:
+        if csm:
             customSpec = self.getCSMByName(csm)
 
         for nicDesc in nicAdd:

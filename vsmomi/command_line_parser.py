@@ -49,7 +49,7 @@ class CommandLineParser(object):
             regexp = re.compile(pattern[1:])
         else:
             pattern = fnmatch.translate(pattern)
-            regexp = re.compile(pattern)
+            regexp = re.compile("^"+pattern)
         return regexp
 
     def diskModeType(self, s):

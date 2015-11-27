@@ -63,18 +63,18 @@ class Clone(SubCommand):
                 "--poweron", action="store_true",
                 help="Power the cloned VMs on")
         parser.add_argument(
-                "--cms", type=str,
+                "--csm", type=str,
                 metavar="customization",
                 help="Path to customication file")
 
         parser.set_defaults(cloneArgs=["name",
             "srcSnap", "target", "diskMode",
-            "cpus", "memory", "host", "datastore", "poweron", "cms",
+            "cpus", "memory", "host", "datastore", "poweron", "csm",
             "extraConfig"])
 
     @export
     def clone(self, name=None, srcSnap=None, target=None, diskMode=[], poweron=False,
-            host=None, datastore=None, memory=None, cpus=None, cms=None, extraConfig=[]):
+            host=None, datastore=None, memory=None, cpus=None, csm=None, extraConfig=[]):
         self._checkType(name, (str, vim.VirtualMachine))
         self._checkType(srcSnap, (type(None), str))
         self._checkType(target, list)
@@ -91,7 +91,7 @@ class Clone(SubCommand):
         self._checkType(datastore, (type(None), str))
         self._checkType(memory, (type(None), int))
         self._checkType(cpus, (type(None), int))
-        self._checkType(cms, (type(None), str))
+        self._checkType(csm, (type(None), str))
         self._checkType(extraConfig, list)
         for ec in extraConfig:
             self._checkType(ec, tuple)
@@ -211,7 +211,7 @@ class Clone(SubCommand):
         cloneSpec.config = configSpec
         if fromSnapshot:
             cloneSpec.snapshot = fromSnapshot
-        if cms:
+        if csm:
             cloneSpec.customization = self.getCSMByName(csm)
 
         rc = 0
