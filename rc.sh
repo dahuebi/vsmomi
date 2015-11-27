@@ -1,7 +1,12 @@
-VENV=env
-python -m virtualenv $VENV
+WD="`dirname "${BASH_SOURCE[0]}"`"
+cd "$WD"
+WD="`pwd`"
+cd - > /dev/null
 
-source $VENV/bin/activate
-pip install -r requirements.txt
-export PYTHONPATH=$PWD
-export PATH=$PWD/bin:$PATH
+VENV=env
+python -m virtualenv "$VENV"
+
+source "$VENV/bin/activate"
+pip install -r "$WD/requirements.txt"
+export PYTHONPATH="$WD:$PYTHONPATH"
+export PATH="$WD/bin:$PATH"
