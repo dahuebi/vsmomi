@@ -46,7 +46,7 @@ class TestVmomi(unittest.TestCase):
 ["clone", "vm", "--target=toVm", "--datastore=ds"],
 ["clone", "vm", "--target=toVm", "--poweron"],
 ["clone", "vm", "--target=toVm", "--host=host1"],
-["clone", "vm", "--target=toVm", "--cms=custom"],
+["clone", "vm", "--target=toVm", "--csm=custom"],
 ["edit", "vm"],
 ["edit", "vm", "--cpus=4"],
 ["edit", "vm", "--mem=256"],
