@@ -140,7 +140,7 @@ class ServiceInstanceAPI(object):
         """
         return self._getAllObjs([vim.Datacenter])
 
-    def getRegisteredVms(self, regexps=[], sort=True):
+    def getRegisteredVms(self, regexps=[], sort=True, asDict=False):
         """
         Returns all vms
         """
@@ -189,7 +189,10 @@ class ServiceInstanceAPI(object):
         if not vms:
             raise LookupError("No VMs found")
 
-        return [item[1] for item in vms]
+        if asDict:
+            return dict(vms)
+        else:
+            return [item[1] for item in vms]
 
     def getNetworks(self):
         """

@@ -35,5 +35,5 @@ class API(object):
                     setattr(self, attr, func)
 
     @export
-    def getVms(self, pattern, sort=True):
-        return self.__app.getRegisteredVms(pattern, sort)
+    def getVms(self, pattern, sort=True, asDict=False):
+        return self.__app.getRegisteredVms(pattern, sort, asDict)
