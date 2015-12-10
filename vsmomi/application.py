@@ -252,13 +252,22 @@ class Application(ServiceInstanceAPI):
         if askCred and not sys.stdin.isatty():
             raise RuntimeError("--ask-cred is only supported with a tty")
         vcenter = args.vcenter
-        vcenter, vcUser, vcPass = cls.loadCreds(args.auth,
+        userHome = os.path.expanduser("~")
+        userAuth = os.path.join(userHome, ".vsmomi.auth")
+        auths = [args.auth, "auth.ini", userAuth]
+        auth = None
+        for path in auths:
+            if os.path.exists(path):
+                auth = path
+                break
+
+        vcenter, vcUser, vcPass = cls.loadCreds(auth,
                 args.vcenter, args.vcUser, args.vcPass, askCred=askCred)
 
         # check credentials
         app = Application(vcenter, vcUser, vcPass, dryrun=args.dryrun)
         if args.saveAuth:
-            cls.saveAuth(authFile, vcenter, vcUser, vcPass)
+            cls.saveAuth(args.auth, vcenter, vcUser, vcPass)
 
         rc = 24
         if args.m2m:
