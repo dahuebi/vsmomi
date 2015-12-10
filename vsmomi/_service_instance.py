@@ -16,6 +16,13 @@ try:
 except AttributeError:
     pass
 
+# disable SSL verification
+__get = requests.get
+def getNoSLL(*args, **kwargs):
+    kwargs["verify"] = False
+    return __get(*args, **kwargs)
+requests.get = getNoSLL
+
 from pyVmomi import vim
 from pyVim.connect import SmartConnect, Disconnect
 
