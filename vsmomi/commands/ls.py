@@ -118,34 +118,17 @@ class Ls(SubCommand):
             rowTmpl = rowShortTmpl
             printHdr = False
 
-        vms = self.getRegisteredVms(regexps=patterns)
+        vms = self.getRegisteredVms(regexps=patterns, sort=False, asDict=True)
         # name, power, cpus, memory, ip, tools
         if printHdr:
             hdrData= {"Name": {"power": "Power", "numCPUs": "CPUs", "memorySizeMB": "Memory",
                     "ipAddress": "IP", "toolsStatus": "Tools"}}
             self.output(hdrData, json=False, tmpl=hdrTmpl)
-        for vm in vms:
-            summary = vm.summary
-            guest = summary.guest
-            config = summary.config
-            runtime = summary.runtime
-
-            vmName = vm.name
-            power = runtime.powerState
-            if power.lower().startswith("powered"):
-                power = power[7:]
-            cpus = config.numCpu
-            memory = config.memorySizeMB
-            ip = guest.ipAddress
-            if not ip:
-                ip = "-"
-            tools = guest.toolsStatus
-            # strip tools
-            if tools.lower().startswith("tools"):
-                tools = tools[5:]
-
-            data = {vmName: {"power": power, "numCPUs": cpus, "memorySizeMB": memory,
-                    "ipAddress": ip, "toolsStatus": tools}}
+        for vmName, vm in sorted(vms.items(), key=lambda x: x[0]):
+            data = {vmName: {}}
+            if not shortList:
+                standardData = self._lsStandard(vm)
+                data[vmName].update(standardData)
 
             if longList:
                 extendedData = self._lsExtended(vm)
@@ -154,6 +137,28 @@ class Ls(SubCommand):
             self.output(data, tmpl=rowTmpl)
 
         return 0
+
+    def _lsStandard(self, vm):
+        summary = vm.summary
+        guest = summary.guest
+        config = summary.config
+        runtime = summary.runtime
+
+        power = runtime.powerState
+        if power.lower().startswith("powered"):
+            power = power[7:]
+        cpus = config.numCpu
+        memory = config.memorySizeMB
+        ip = guest.ipAddress
+        if not ip:
+            ip = "-"
+        tools = guest.toolsStatus
+        # strip tools
+        if tools.lower().startswith("tools"):
+            tools = tools[5:]
+
+        return {"power": power, "numCPUs": cpus, "memorySizeMB": memory,
+                "ipAddress": ip, "toolsStatus": tools}
 
     def _lsExtended(self, vm):
         CDROM = vim.vm.device.VirtualCdrom
