@@ -11,6 +11,7 @@ import re
 import os
 import argparse
 from argparse import ArgumentTypeError
+import traceback
 
 from . import commands
 
@@ -44,12 +45,17 @@ class CommandLineParser(object):
         return factor
 
     def patternToRegexp(self, pattern):
-        regexp = None
-        if pattern.startswith("~"):
-            regexp = re.compile(pattern[1:])
-        else:
-            pattern = fnmatch.translate(pattern)
-            regexp = re.compile("^"+pattern)
+        pattern = pattern.decode("UTF-8")
+        try:
+            regexp = None
+            if pattern.startswith("~"):
+                regexp = re.compile(pattern[1:])
+            else:
+                pattern = fnmatch.translate(pattern)
+                regexp = re.compile("^"+pattern)
+        except:
+            traceback.print_exc()
+            raise
         return regexp
 
     def diskModeType(self, s):
