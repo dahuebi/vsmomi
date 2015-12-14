@@ -174,8 +174,11 @@ class Application(ServiceInstanceAPI):
         cfg = configparser.ConfigParser()
         cfg.read(authFile)
         if not vcenter:
-            vcenter = cfg.sections()[0]
-        if cfg.has_section(vcenter):
+            try:
+                vcenter = cfg.sections()[0]
+            except IndexError:
+                pass
+        if vcenter and cfg.has_section(vcenter):
             if cfg.has_option(vcenter, "username"):
                 vcUser = cfg.get(vcenter, "username")
             if cfg.has_option(vcenter, "password"):
@@ -185,13 +188,15 @@ class Application(ServiceInstanceAPI):
     @classmethod
     def saveAuth(cls, authFile, vcenter, vcUser, vcPass):
         cfg = configparser.ConfigParser()
-        with open(authFile, "a") as fp:
-            cfg.readfp(fp)
+        with open(authFile, "a+b") as fp:
             fp.seek(0)
+            cfg.readfp(fp)
             if not cfg.has_section(vcenter):
                 cfg.add_section(vcenter)
             cfg.set(vcenter, "username", vcUser)
             cfg.set(vcenter, "password", vcPass)
+            fp.seek(0)
+            fp.truncate()
             cfg.write(fp)
 
     @classmethod
