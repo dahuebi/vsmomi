@@ -13,6 +13,7 @@ import fnmatch
 import logging
 
 from pyVmomi import vim
+from . import pchelper
 
 from ._service_instance import ServiceInstance
 
@@ -59,8 +60,11 @@ class ServiceInstanceAPI(object):
         obj = {}
         content = self.content()
         container = content.viewManager.CreateContainerView(content.rootFolder, vimtype, True)
-        for c in container.view:
-            obj.update({c: c.name})
+        for item in pchelper.collect_properties(
+                self.si, view_ref=container,
+                obj_type=vimtype[0],
+                path_set=["name"], include_mors=True):
+            obj.update({item["obj"]: item["name"]})
         return obj
 
     def getVmByName(self, name):
