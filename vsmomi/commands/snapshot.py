@@ -15,8 +15,18 @@ class Snapshot(SubCommand):
 
     @classmethod
     def addParser(cls, cmdLineParser, subparsers):
-        # TODO
-        pass
+        parser = cmdLineParser.getSubParser(
+                "snapshot", subparsers,
+                help="Create snapshots")
+        parser.add_argument(
+                "name",
+                metavar="name",
+                help="VM to create snapshot")
+        parser.add_argument(
+                "snap", type=str,
+                metavar="<snashot name>",
+                help="Snapshot to create.")
+        parser.set_defaults(snapshotArgs=["name", "snap"])
 
     @export
     def snapshot(self, name=None, snap=None):
