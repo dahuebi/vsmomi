@@ -165,7 +165,8 @@ class ServiceInstanceAPI(object):
                 if pattern.startswith("~"):
                     regexp = re.compile(pattern[1:])
                 else:
-                    regexp = re.compile("^"+fnmatch.translate(pattern))
+                    pattern = fnmatch.translate(pattern)
+                    regexp = re.compile("^"+pattern)
                 regexps.append(regexp)
             elif isinstance(pattern, vim.VirtualMachine):
                 inputVms.append(pattern)

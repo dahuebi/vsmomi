@@ -21,7 +21,7 @@ def isExported(func):
 class API(object):
     def __init__(self, *args, **kwargs):
         from .application import Application
-        app = Application(*args, **kwargs)
+        app = Application.getInstance(*args, **kwargs)
         self.__app = app
         for obj in [app] + app.subCommands:
             for attr in dir(type(obj)):

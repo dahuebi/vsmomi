@@ -244,6 +244,27 @@ class Application(ServiceInstanceAPI):
         return vcenter, vcUser, vcPass
 
     @classmethod
+    @export
+    def getInstance(cls, auth=None, vcenter=None, username=None, password=None,
+            askCred=False, saveAuth=False, dryrun=False):
+        if askCred and not sys.stdin.isatty():
+            raise RuntimeError("--ask-cred is only supported with a tty")
+        userHome = os.path.expanduser("~")
+        userAuth = os.path.join(userHome, ".vsmomi.auth")
+        auths = [auth, "auth.ini", userAuth]
+        _auth = None
+        for path in auths:
+            if path and os.path.exists(path):
+                _auth = path
+                break
+        vcenter, vcUser, vcPass = cls.loadCreds(_auth,
+                vcenter, username, password, askCred=askCred)
+        app = Application(vcenter, vcUser, vcPass, dryrun=dryrun)
+        if saveAuth and not dryrun:
+            cls.saveAuth(auth, vcenter, vcUser, vcPass)
+        return app
+
+    @classmethod
     def main(cls, argv=sys.argv[1:]):
         which, args, parserArgs = \
                 CommandLineParser().parse(argv=argv)
@@ -251,28 +272,11 @@ class Application(ServiceInstanceAPI):
             args.vcenter = "vcenter"
             args.vcUser = "vc_user"
             args.vcPass = "vc_pass"
-            args.saveAuth = False
-
-        askCred = args.askCred
-        if askCred and not sys.stdin.isatty():
-            raise RuntimeError("--ask-cred is only supported with a tty")
-        vcenter = args.vcenter
-        userHome = os.path.expanduser("~")
-        userAuth = os.path.join(userHome, ".vsmomi.auth")
-        auths = [args.auth, "auth.ini", userAuth]
-        auth = None
-        for path in auths:
-            if os.path.exists(path):
-                auth = path
-                break
-
-        vcenter, vcUser, vcPass = cls.loadCreds(auth,
-                args.vcenter, args.vcUser, args.vcPass, askCred=askCred)
 
         # check credentials
-        app = Application(vcenter, vcUser, vcPass, dryrun=args.dryrun)
-        if args.saveAuth:
-            cls.saveAuth(args.auth, vcenter, vcUser, vcPass)
+        app = cls.getInstance(vcenter=args.vcenter, username=args.vcUser,
+                password=args.vcPass, askCred=args.askCred, saveAuth=args.saveAuth,
+                dryrun=args.dryrun)
 
         rc = 24
         if args.m2m:
