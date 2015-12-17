@@ -23,7 +23,7 @@ class Snapshot(SubCommand):
                 metavar="name",
                 help="VM to create snapshot")
         parser.add_argument(
-                "snap", type=str,
+                "snap",
                 metavar="<snashot name>",
                 help="Snapshot to create.")
         parser.set_defaults(snapshotArgs=["name", "snap"])
@@ -34,6 +34,7 @@ class Snapshot(SubCommand):
         self._checkType(snap, str)
 
         regexps = [re.compile("^{}$".format(re.escape(name)))]
+        #snap = snap.decode("UTF-8")
         vm = self.getRegisteredVms(regexps=regexps)[0]
         task = vm.CreateSnapshot(name=snap, memory=False, quiesce=False)
         vcTask = VcTask(task)
