@@ -109,6 +109,10 @@ class Ls(SubCommand):
 #end for
 #end if \
 
+#if $v.snapshots
+    Snapshots: $v.snapshots
+#end if \
+
 #end for \
 ''')
         if longList:
