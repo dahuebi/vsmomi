@@ -43,8 +43,10 @@ class Destroy(SubCommand):
         for vm in vms:
             vmName = vm.name
             vm.PowerOff()
-            vm.Destroy()
+            task = vm.Destroy()
             self.output({vmName: "Destroy"}, tmpl=tmpl)
+            vcTask = VcTask(task)
+            vcTask.waitTaskDone()
 
         return 0
 
