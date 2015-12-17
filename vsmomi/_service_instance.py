@@ -9,6 +9,7 @@ from future.builtins.disabled import *
 import base64
 import atexit
 
+import ssl
 import requests
 # disable warnings
 try:
@@ -22,6 +23,11 @@ def getNoSLL(*args, **kwargs):
     kwargs["verify"] = False
     return __get(*args, **kwargs)
 requests.get = getNoSLL
+
+sslContext = None
+if hasattr(ssl, "SSLContext"):
+    sslContext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+    sslContext.verify_mode = ssl.CERT_NONE
 
 from pyVmomi import vim
 from pyVim.connect import SmartConnect, Disconnect
@@ -46,6 +52,9 @@ class ServiceInstance(object):
                 pass
 
         if connect:
+            kwargs = {}
+            if sslContext:
+                kwargs.update({"sslContext": sslContext})
             si = None
             try:
                 pwd = base64.b64decode(self.password).decode("utf-8")
@@ -53,7 +62,8 @@ class ServiceInstance(object):
                     host=self.vcenter,
                     user=self.username,
                     pwd=pwd,
-                    port=443)
+                    port=443,
+                    **kwargs)
             except IOError:
                 raise
             if self.si is None:
