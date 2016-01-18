@@ -68,14 +68,19 @@ class Edit(SubCommand):
                 dest="diskDestroy",
                 help="List of [controllerNumber-slotNumber] to delete, ex: 0-1 2-3")
 
+        parser.add_argument(
+                "--tools-upgrade-at-powercycle", action="store_true",
+                dest="toolsUpgradeAtPowercycle",
+                help="Upgrade VMWare tools at powercycle")
+
         # nic
         parser.set_defaults(editArgs=["name",
             "cpus", "memory", "diskDestroy", "network", "iso",
-            "extraConfig", "diskNew", "diskLinked"])
+            "extraConfig", "diskNew", "diskLinked", "toolsUpgradeAtPowercyecle"])
 
     @export
     def edit(self, name=None, cpus=None, memory=None, extraConfig=[], network=None, iso=None,
-            diskDestroy=[], diskNew=[], diskLinked=[]):
+            diskDestroy=[], diskNew=[], diskLinked=[], toolsUpgradeAtPowercycle=False):
         self._checkType(name, (str, vim.VirtualMachine))
         self._checkType(memory, (type(None), int))
         self._checkType(cpus, (type(None), int))
@@ -276,6 +281,10 @@ class Edit(SubCommand):
                 devices.append(change)
 
         configSpec.deviceChange = devices
+        if toolsUpgradeAtPowercycle:
+            policy = "{}".format("upgradeAtPowerCycle")
+            toolsConfig = vim.vm.ToolsConfigInfo(toolsUpgradePolicy=policy)
+            configSpec.tools = toolsConfig
 
         task = vm.ReconfigVM_Task(spec=configSpec)
         vcTask = VcTask(task)
