@@ -59,10 +59,22 @@ class GuestCommand(SubCommand):
         vms = self.getRegisteredVms(regexps=patterns)
         return auth, vms
 
-    def _guestCheckUpgradeTools(self, vm):
-        if vm.guest.toolsStatus == "toolsOld":
+    def _guestCheckUpgradeTools(self, vm, auth):
+        content = self.content()
+        pm = content.guestOperationsManager.processManager
+        try:
+            pm.ListProcessesInGuest(vm=vm, auth=auth, pids=[0])
+            # command worked
+            return True
+        except vim.fault.InvalidGuestLogin:
+            # invalid login
+            return True
+        except vim.fault.GuestOperationsUnavailable:
+            # guest operations not running
+            return False
+        except vim.fault.GuestComponentsOutOfDate:
             # upgrade tools
-            self.logger.info("Upgrading/installing tools.")
+            self.logger.info("Upgrading tools.")
             task = vm.UpgradeTools()
             vcTask = VcTask(task)
             vcTask.waitTaskDone()

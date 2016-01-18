@@ -61,7 +61,7 @@ class GuestExecute(GuestCommand):
         pm = content.guestOperationsManager.processManager
         tasks = {}
         for vm in vms:
-            if not self._guestCheckUpgradeTools(vm):
+            if not self._guestCheckUpgradeTools(vm, auth):
                 data = {vm.name: {"success": False, "ERROR": "VMTools not OK"}}
                 self.output(data, level=logging.ERROR)
                 rc = 1

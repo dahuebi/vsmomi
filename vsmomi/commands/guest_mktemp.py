@@ -50,7 +50,7 @@ class GuestMkTemp(GuestCommand):
         tempDirs = {}
         for vm in vms:
             vmName = vm.name
-            if not self._guestCheckUpgradeTools(vm):
+            if not self._guestCheckUpgradeTools(vm, auth):
                 self.logger.error("VMTools not OK: {}".format(vmName))
                 rc = 1
                 continue
