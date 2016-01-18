@@ -8,6 +8,7 @@ from future.builtins.disabled import *
 import re
 import os
 import datetime
+import time
 
 from future.standard_library import install_aliases
 install_aliases()
@@ -57,4 +58,25 @@ class GuestCommand(SubCommand):
         auth = self._getGuestAuth(guestUser, guestPass)
         vms = self.getRegisteredVms(regexps=patterns)
         return auth, vms
+
+    def _guestCheckUpgradeTools(self, vm):
+        if vm.guest.toolsStatus == "toolsOld":
+            # upgrade tools
+            self.logger.info("Upgrading/installing tools.")
+            task = vm.UpgradeTools()
+            vcTask = VcTask(task)
+            vcTask.waitTaskDone()
+            self.logger.info("Waiting for tools status.")
+            timeEnd = time.time() + 60
+            while timeEnd > time.time():
+                try:
+                    if vm.guest.toolsStatus:
+                        break
+                except vim.fault.GuestOperationsUnavailable:
+                    pass
+                time.sleep(1)
+
+        if vm.guest.toolsStatus == "toolsOk":
+            return True
+        return False
 

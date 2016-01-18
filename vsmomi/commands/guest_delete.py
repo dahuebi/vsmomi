@@ -45,7 +45,7 @@ class GuestDelete(GuestCommand):
         fm = content.guestOperationsManager.fileManager
         for vm in vms:
             vmName = vm.name
-            if vm.guest.toolsStatus != "toolsOk":
+            if not self._guestCheckUpgradeTools(vm):
                 self.logger.error("VMTools not OK: {}".format(vmName))
                 rc = 1
                 continue
