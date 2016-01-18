@@ -157,6 +157,8 @@ class Ls(SubCommand):
         if not ip:
             ip = "-"
         tools = guest.toolsStatus
+        if not tools:
+            tools = "-"
         # strip tools
         if tools.lower().startswith("tools"):
             tools = tools[5:]
