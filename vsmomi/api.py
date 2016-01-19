@@ -37,3 +37,7 @@ class API(object):
     @export
     def getVms(self, pattern, sort=True, asDict=False):
         return self.__app.getRegisteredVms(pattern, sort, asDict)
+
+    @export
+    def getContent(self):
+        return self.__app.content()
