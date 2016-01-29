@@ -8,6 +8,7 @@ from future.builtins.disabled import *
 import time
 import re
 import os
+import subprocess
 
 from ._guest_common import *
 
@@ -50,8 +51,8 @@ class GuestExecute(GuestCommand):
         rc = 0
         prog = cmd[0]
         # TODO: guest os dependent escape for "
-        #args = " ".join(['"{}"'.format(re.sub('"', '^"', s)) for s in  cmd[1:]])
-        args = " ".join(['"{}"'.format(s) for s in  cmd[1:]])
+        args = []
+        args = subprocess.list2cmdline(cmd[1:])
         wd = re.sub(r"[^\\/]*$", "", prog)
         cmdspec = vim.vm.guest.ProcessManager.ProgramSpec(
                 arguments=args, programPath=prog,
