@@ -1,4 +1,4 @@
-set VENV=ENV
+set VENV=env
 python -m virtualenv "%VENV%"
 
 call "%VENV%\Scripts\activate.bat"
