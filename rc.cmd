@@ -1,5 +1,5 @@
 set VENV=env
-python -m virtualenv "%VENV%"
+py.exe -2 -m virtualenv "%VENV%"
 
 call "%VENV%\Scripts\activate.bat"
 pip install -r "%~dp0\requirements.txt"

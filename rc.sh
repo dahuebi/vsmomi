@@ -4,7 +4,7 @@ WD="`pwd`"
 cd - > /dev/null
 
 VENV=env
-python -m virtualenv "$VENV"
+python2 -m virtualenv "$VENV"
 
 source "$VENV/bin/activate"
 pip install -r "$WD/requirements.txt"
