@@ -198,6 +198,7 @@ class Application(ServiceInstanceAPI):
             fp.seek(0)
             fp.truncate()
             cfg.write(fp)
+        print ("auth saved in {}".format(authFile))
 
     @classmethod
     def loadCreds(cls, authFile, vcenter, vcUser, vcPass, askCred):
@@ -250,7 +251,10 @@ class Application(ServiceInstanceAPI):
         if askCred and not sys.stdin.isatty():
             raise RuntimeError("--ask-cred is only supported with a tty")
         userHome = os.path.expanduser("~")
+        userHome = os.path.expandvars(userHome)
         userAuth = os.path.join(userHome, ".vsmomi.auth")
+        if not auth:
+            auth = userAuth
         auths = [auth, "auth.ini", userAuth]
         _auth = None
         for path in auths:
@@ -274,7 +278,7 @@ class Application(ServiceInstanceAPI):
             args.vcPass = "vc_pass"
 
         # check credentials
-        app = cls.getInstance(vcenter=args.vcenter, username=args.vcUser,
+        app = cls.getInstance(auth=args.auth, vcenter=args.vcenter, username=args.vcUser,
                 password=args.vcPass, askCred=args.askCred, saveAuth=args.saveAuth,
                 dryrun=args.dryrun)
 

@@ -171,7 +171,7 @@ class CommandLineParser(object):
                 type=str,
                 default="auth.ini",
                 metavar="auth.ini",
-                help="Load credentials from auth file")
+                help="Load credentials from auth file, user empty to save in user home")
         parser.add_argument(
                 "--save-auth",
                 action="store_true", dest="saveAuth",
