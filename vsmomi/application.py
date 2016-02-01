@@ -229,7 +229,7 @@ class Application(ServiceInstanceAPI):
                 vcUser = _vcUser if _vcUser else vcUser
             if askCred or not vcPass:
                 passStars = "*****" if vcPass else ""
-                _vcPass = getpass.getpass("Password ({}): ".format(passStars))
+                _vcPass = getpass.getpass(b"Password ({}): ".format(passStars))
                 vcPass = _vcPass if _vcPass else vcPass
 
         if vcPass:
