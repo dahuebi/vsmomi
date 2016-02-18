@@ -60,18 +60,8 @@ class GuestCommand(SubCommand):
         return auth, vms
 
     def _guestCheckUpgradeTools(self, vm, auth):
-        content = self.content()
-        pm = content.guestOperationsManager.processManager
         try:
-            pm.ListProcessesInGuest(vm=vm, auth=auth, pids=[0])
-            # command worked
-            return True
-        except vim.fault.InvalidGuestLogin:
-            # invalid login
-            return True
-        except vim.fault.GuestOperationsUnavailable:
-            # guest operations not running
-            return False
+            return self._guestCheckTools(vm, auth)
         except vim.fault.GuestComponentsOutOfDate:
             # upgrade tools
             self.logger.info("Upgrading tools.")
@@ -87,6 +77,27 @@ class GuestCommand(SubCommand):
                 except vim.fault.GuestOperationsUnavailable:
                     pass
                 time.sleep(1)
+
+        if vm.guest.toolsStatus == "toolsOk":
+            return True
+        return False
+
+    def _guestCheckTools(self, vm, auth):
+        content = self.content()
+        am = content.guestOperationsManager.authManager
+        try:
+            am.ValidateCredentialsInGuest(vm=vm, auth=auth)
+            # command worked
+            return True
+        except vim.fault.InvalidGuestLogin:
+            # invalid login
+            return True
+        except vim.fault.GuestOperationsUnavailable:
+            # guest operations not running
+            return False
+        except vim.fault.GuestComponentsOutOfDate:
+            # guest tools needs upgrade
+            return False
 
         if vm.guest.toolsStatus == "toolsOk":
             return True

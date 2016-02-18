@@ -14,20 +14,26 @@ from .m2m import M2M
 from .power import Power
 from .snapshot import Snapshot
 from .help import Help
+from .guest_ls import GuestLs
+from .guest_read_env import GuestReadEnv
+from .guest_tools_upgrade import GuestToolsUpgrade
 
 commands = [
     Clone,
-    Customize, 
+    Customize,
     Destroy,
     Edit,
     GuestDelete,
     GuestDownload,
     GuestExecute,
     GuestUpload,
+    GuestLs,
+    GuestReadEnv,
     Ls,
     M2M,
     Power,
     Snapshot,
     Help,
     GuestMkTemp,
+    GuestToolsUpgrade,
 ]

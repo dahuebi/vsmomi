@@ -56,7 +56,7 @@ class GuestUpload(GuestCommand):
         fileAttributes = vim.vm.guest.FileManager.FileAttributes()
         for vm in vms:
             vmName = vm.name
-            if not self._guestCheckUpgradeTools(vm, auth):
+            if not self._guestCheckTools(vm, auth):
                 self.logger.error("VMTools not OK: {}".format(vmName))
                 rc = 1
                 continue
